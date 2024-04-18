@@ -46,6 +46,29 @@ const getUserByUsername = async (user) => {
   return rows[0];
 };
 
-const updateUser = async (id, user) => {};
+const updateUser = async (id, body, user) => {
+  if (user.access !== "admin" && body.access) {
+    return { message: "Only admins are allowed to change user access." };
+  }
+
+  let sql = promisePool.format("UPDATE users SET ? WHERE id = ?", [
+    body,
+    user.id,
+  ]);
+
+  if (user.access === "admin") {
+    sql = promisePool.format("UPDATE users SET ? WHERE id = ?", [body, id]);
+  }
+
+  try {
+    const rows = await promisePool.execute(sql);
+    console.log("Updated user", rows);
+    if (rows[0].affectedRows === 0) return false;
+    return { message: "Success" };
+  } catch (err) {
+    console.error("Error", err);
+    return false;
+  }
+};
 
 export { getUserByUsername, listAllUsers, addUser, getUser, updateUser };

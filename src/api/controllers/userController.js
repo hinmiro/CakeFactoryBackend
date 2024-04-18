@@ -26,7 +26,7 @@ const getUserById = async (req, res) => {
 };
 
 const modifyUser = async (req, res) => {
-  const result = await updateUser(req.params.id, req.body);
+  const result = await updateUser(req.params.id, req.body, res.locals.user);
   if (!result) res.sendStatus(401);
   res.status(200).json({ message: "User updated successfully" });
 };

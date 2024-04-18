@@ -20,9 +20,12 @@ const postLogin = async (req, res) => {
 };
 
 const getMe = async (req, res) => {
-  if (res.locals.user)
+  console.log("get me", res.locals.user);
+  if (res.locals.user) {
     res.json({ message: "Token is valid", user: res.locals.user });
-  else res.sendStatus(401);
+  } else {
+    res.sendStatus(401);
+  }
 };
 
 export { postLogin, getMe };
