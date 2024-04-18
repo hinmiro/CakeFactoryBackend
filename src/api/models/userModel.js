@@ -30,13 +30,22 @@ const addUser = async (user) => {
   return { message: "User added to database" };
 };
 
-const getUser = async (user) => {
-  const rows = await promisePool.query(
-    "SELECT * FROM users WHERE user_id = ?",
-    [user.user_id],
-  );
+const getUser = async (id) => {
+  console.log(id);
+  const rows = await promisePool.query("SELECT * FROM users WHERE id = ?", [
+    id,
+  ]);
   if (rows[0].length === 0) return false;
   return rows[0];
 };
 
-export { listAllUsers, addUser, getUser };
+const getUserByUsername = async (user) => {
+  const sql = "SELECT * FROM users WHERE username = ?";
+  const [rows] = await promisePool.execute(sql, [user]);
+  if (rows.length === 0) return false;
+  return rows[0];
+};
+
+const updateUser = async (id, user) => {};
+
+export { getUserByUsername, listAllUsers, addUser, getUser, updateUser };

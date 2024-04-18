@@ -2,9 +2,8 @@
 
 import jwt from "jsonwebtoken";
 import "dotenv/config";
-import { validationResult } from "express-validator";
 
-const authenticateToken = (req, res) => {
+const authToken = (req, res) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(", ")[1];
   console.log("Token: ", token);
@@ -17,4 +16,4 @@ const authenticateToken = (req, res) => {
   }
 };
 
-export { authenticateToken };
+export { authToken };
