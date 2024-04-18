@@ -9,16 +9,8 @@ const listAllUsers = async () => {
 };
 
 const addUser = async (user) => {
-  const {
-    name,
-    street_name,
-    street_num,
-    zip_code,
-    city,
-    username,
-    password,
-    access,
-  } = user;
+  const { name, street_name, street_num, zip_code, city, username, password } =
+    user;
   const params = [
     name,
     street_name,
@@ -27,12 +19,11 @@ const addUser = async (user) => {
     city,
     username,
     password,
-    access,
   ];
   if (params.some((p) => p === null || p === undefined)) return false;
 
   const sql =
-    "INSERT INTO users (name, street_name, street_num, zip_code, city, username, password, access) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO users (name, street_name, street_num, zip_code, city, username, password, access) VALUES (?, ?, ?, ?, ?, ?, ?, 'user')";
 
   const rows = await promisePool.execute(sql, params);
   if (rows[0].affectedRows === 0) return false;
