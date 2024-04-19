@@ -15,4 +15,8 @@ const postProduct = async (req, res) => {
   }
 }
 
+//Todo: connect getProduct function
+//Todo: connect deleteProduct function
+//Todo: connect updateProduct function
+
 export {postProduct};

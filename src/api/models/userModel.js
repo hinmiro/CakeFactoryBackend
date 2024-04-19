@@ -7,7 +7,7 @@ const listAllUsers = async () => {
   const rows = await promisePool.query("SELECT * FROM users");
   return rows;
 };
-
+//todo if access not given then it should be user
 const addUser = async (user) => {
   const {
     name,
@@ -79,12 +79,12 @@ const updateUser = async (id, body, user) => {
     return false;
   }
 };
-
+// todo fix deleteUser it doesnt delete right id, it deletes user itself
 const deleteUserById = async (id, user) => {
   if (id !== user.id && user.access !== "admin") {
-    return { message: "Only admin can delete other users" };
+    return;
   }
-
+  console.log("id", id, "   user", user.id);
   let sql = promisePool.format("DELETE FROM users WHERE id = ?", [user.id]);
 
   if (user.access === "admin") {
