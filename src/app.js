@@ -7,6 +7,7 @@ import {
   notFoundHandler,
   validationErrors,
 } from "./middlewares.js";
+import orderRouter from './api/routes/orderRouter.js';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/v1", api);
 app.use("/v1/auth", authRouter);
+app.use("/v1/orders", orderRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 app.use(validationErrors);
