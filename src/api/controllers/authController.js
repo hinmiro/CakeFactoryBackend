@@ -14,7 +14,7 @@ const postLogin = async (req, res) => {
   delete user.password;
 
   const token = jwt.sign(user, process.env.SECRETKEY, {
-    expiresIn: "1h",
+    expiresIn: "24h",
   });
   res.json({ user: user, token });
 };

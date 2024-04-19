@@ -9,8 +9,16 @@ const listAllUsers = async () => {
 };
 
 const addUser = async (user) => {
-  const { name, street_name, street_num, zip_code, city, username, password } =
-    user;
+  const {
+    name,
+    street_name,
+    street_num,
+    zip_code,
+    city,
+    username,
+    password,
+    access,
+  } = user;
   const params = [
     name,
     street_name,
@@ -19,11 +27,12 @@ const addUser = async (user) => {
     city,
     username,
     password,
+    access,
   ];
   if (params.some((p) => p === null || p === undefined)) return false;
 
   const sql =
-    "INSERT INTO users (name, street_name, street_num, zip_code, city, username, password, access) VALUES (?, ?, ?, ?, ?, ?, ?, 'user')";
+    "INSERT INTO users (name, street_name, street_num, zip_code, city, username, password, access) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
   const rows = await promisePool.execute(sql, params);
   if (rows[0].affectedRows === 0) return false;
@@ -71,4 +80,31 @@ const updateUser = async (id, body, user) => {
   }
 };
 
-export { getUserByUsername, listAllUsers, addUser, getUser, updateUser };
+const deleteUserById = async (id, user) => {
+  if (id !== user.id && user.access !== "admin") {
+    return { message: "Only admin can delete other users" };
+  }
+
+  let sql = promisePool.format("DELETE FROM users WHERE id = ?", [user.id]);
+
+  if (user.access === "admin") {
+    let sql = promisePool.format("DELETE FROM users WHERE id = ?", [id]);
+  }
+  try {
+    const rows = await promisePool.execute(sql);
+    if (rows[0].length === 0) return false;
+    return { message: "Deleted user" };
+  } catch (err) {
+    console.error("Error", err);
+    return false;
+  }
+};
+
+export {
+  getUserByUsername,
+  listAllUsers,
+  addUser,
+  getUser,
+  updateUser,
+  deleteUserById,
+};

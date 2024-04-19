@@ -5,6 +5,7 @@ import {
   addUser,
   getUser,
   updateUser,
+  deleteUserById,
 } from "../models/userModel.js";
 
 const getAllUsers = async (req, res) => {
@@ -31,4 +32,10 @@ const modifyUser = async (req, res) => {
   res.status(200).json({ message: "User updated successfully" });
 };
 
-export { getAllUsers, registerUser, getUserById, modifyUser };
+const deleteUser = async (req, res) => {
+  const result = await deleteUserById(req.params.id, res.locals.user);
+  if (!result) res.sendStatus(401);
+  res.status(200).json({ message: "User deleted" });
+};
+
+export { getAllUsers, registerUser, getUserById, modifyUser, deleteUser };
