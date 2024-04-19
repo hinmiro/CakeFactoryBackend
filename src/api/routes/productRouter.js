@@ -1,14 +1,13 @@
 "use strict";
 import express from "express";
 import crypto from "crypto";
-import { postProduct } from "../controllers/productController.js";
 import multer from "multer";
-import e from "express";
-import { authToken } from "../../middlewares.js";
+import { postProduct } from "../controllers/productController.js";
+import { authToken, validationErrors } from "../../middlewares.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "/uploads");
+    cb(null, "./uploads");
   },
   filename: function (req, file, cb) {
     const suffix = crypto.randomBytes(16).toString("hex");
@@ -42,8 +41,19 @@ const upload = multer({
   },
 });
 
+const adminUpload = (req, res, next) => {
+  if (res.locals.user.access !== "admin") {
+    return res
+      .status(401)
+      .json({ message: "Only admins are allowed to add products" });
+  }
+  upload.single("img")(req, res, next);
+};
+
 const productRouter = express.Router();
 
-productRouter.route("/").post(authToken, upload.single("file"), postProduct);
+productRouter
+  .route("/")
+  .post(authToken, validationErrors, adminUpload, postProduct);
 
 export default productRouter;

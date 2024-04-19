@@ -2,6 +2,7 @@
 
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import { validationResult } from "express-validator";
 
 const authToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -17,4 +18,35 @@ const authToken = (req, res, next) => {
   }
 };
 
-export { authToken };
+const notFoundHandler = (res, req, next) => {
+  console.log("req: ", req);
+  const error = new Error(`Resource not found: ${req.originalUrl}`);
+  error.status = 404;
+  next(error);
+};
+
+const errorHandler = (err, req, res, next) => {
+  res.status(err || 500);
+  res.json({
+    error: {
+      message: err.message + " I MA CAKE!",
+      status: res.status || 500,
+    },
+  });
+};
+
+const validationErrors = async (req, res, next) => {
+  const errors = await validationResult(req);
+  if (!errors.isEmpty()) {
+    const messages = errors
+      .array()
+      .map((error) => `${error.path}: ${error.msg}`)
+      .join(", ");
+    const error = new Error(messages);
+    error.status = 400;
+    next(error);
+  }
+  next();
+};
+
+export { authToken, notFoundHandler, errorHandler, validationErrors };
