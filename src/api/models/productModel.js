@@ -9,4 +9,8 @@ const addProduct = async (product) => {
   await promisePool.execute(sql, params);
 }
 
+// Todo : Update product write function
+// Todo : Delete product read function
+// Todo : Get product by id read function
+
 export {addProduct};

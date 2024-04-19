@@ -34,8 +34,8 @@ const modifyUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const result = await deleteUserById(req.params.id, res.locals.user);
-  if (!result) res.sendStatus(401);
-  res.status(200).json({ message: "User deleted" });
+  if (!result) res.status(401).json({ message: "Only admin can delete other users"});
+  else res.status(200).json({ message: "User deleted" });
 };
 
 export { getAllUsers, registerUser, getUserById, modifyUser, deleteUser };
