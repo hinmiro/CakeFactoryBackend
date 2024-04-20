@@ -5,6 +5,7 @@ import {
   getAllProducts,
   getProduct,
   exterminateProduct,
+  updateProduct,
 } from "../models/productModel.js";
 
 const postProduct = async (req, res, next) => {
@@ -46,6 +47,15 @@ const deleteProduct = async (req, res, next) => {
   }
 };
 
-//Todo: connect updateProduct function
+const putProduct = async (req, res, next) => {
+  const result = await updateProduct(req.params.id, res.locals.user, req.body);
+  if (!result) {
+    const error = new Error("No product with that id");
+    error.status = 400;
+    next(error);
+  } else {
+    res.status(200).json(result);
+  }
+};
 
-export { postProduct, getProducts, getProductById, deleteProduct };
+export { postProduct, getProducts, getProductById, deleteProduct, putProduct };

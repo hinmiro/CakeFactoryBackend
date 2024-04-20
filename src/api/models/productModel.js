@@ -57,7 +57,24 @@ const exterminateProduct = async (id, user) => {
   }
 };
 
-// Todo : Update product write function
-// Todo : Delete product read function
+const updateProduct = async (id, user, body) => {
+  if (user.access !== "admin") {
+    return { message: "Only admin can update products" };
+  }
+  console.log(body);
+  const sql = promisePool.format("UPDATE products SET ? WHERE id = ?", [
+    body,
+    id,
+  ]);
+  const [rows] = await promisePool.execute(sql);
+  if (rows.affectedRows === 0) return { message: "Nothing to update" };
+  return { message: "Product update success", rows };
+};
 
-export { addProduct, getAllProducts, getProduct, exterminateProduct };
+export {
+  addProduct,
+  getAllProducts,
+  getProduct,
+  exterminateProduct,
+  updateProduct,
+};

@@ -7,6 +7,7 @@ import {
   getProducts,
   getProductById,
   deleteProduct,
+  putProduct,
 } from "../controllers/productController.js";
 import { authToken, validationErrors } from "../../middlewares.js";
 
@@ -65,6 +66,7 @@ productRouter
 productRouter
   .route("/:id")
   .get(getProductById)
-  .delete(authToken, validationErrors, deleteProduct);
+  .delete(authToken, validationErrors, deleteProduct)
+  .put(authToken, validationErrors, putProduct);
 
 export default productRouter;
