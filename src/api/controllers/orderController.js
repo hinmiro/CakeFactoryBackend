@@ -1,6 +1,12 @@
 'use strict';
 
-import {addOrder, getAllOrders, getUserOrder, delOrder} from '../models/orderModel.js';
+import {
+  addOrder,
+  getAllOrders,
+  getUserOrder,
+  delOrder,
+  deliverOrder,
+} from '../models/orderModel.js';
 
 const postOrder = async (req, res) => {
   try {

@@ -4,7 +4,7 @@ import promisePool from "../../utils/database.js";
 import "dotenv/config";
 
 const listAllUsers = async () => {
-  const rows = await promisePool.query("SELECT * FROM users");
+  const [rows] = await promisePool.query("SELECT * FROM users");
   return rows;
 };
 //todo if access not given then it should be user

@@ -8,6 +8,7 @@ import {
   validationErrors,
 } from "./middlewares.js";
 import orderRouter from "./api/routes/orderRouter.js";
+import productRouter from './api/routes/productRouter.js';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/v1", api);
 app.use("/v1/auth", authRouter);
 app.use("/v1/orders", orderRouter);
+app.use('/v1/products', productRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 app.use(validationErrors);

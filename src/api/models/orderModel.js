@@ -33,13 +33,18 @@ const delOrder = async (id) => {
 }
 
 const deliverOrder = async (id) => {
-  const sql = 'UPDATE orders SET status = ? WHERE id = ?';
-  const status = 1;
-  const [result] = await promisePool.execute(sql, [status, id]);
-  if (result.affectedRows > 0) {
-    return true;
-  } else {
-    return false;
+  try {
+    const sql = 'UPDATE orders SET status = ? WHERE id = ?';
+    const status = 1;
+    const [result] = await promisePool.execute(sql, [status, id]);
+    if (result.affectedRows > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error('Error delivering order:', error);
+    return false; // Return false to indicate that there was an error
   }
 }
 
