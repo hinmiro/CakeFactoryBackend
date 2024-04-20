@@ -54,6 +54,7 @@ const productRouter = express.Router();
 
 productRouter
   .route("/")
+  .get(getProducts)
   .post(authToken, validationErrors, adminUpload, postProduct);
 
 export default productRouter;
