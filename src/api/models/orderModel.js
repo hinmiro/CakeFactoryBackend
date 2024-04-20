@@ -1,36 +1,42 @@
-'use strict';
+"use strict";
 
-import promisePool from '../../utils/database.js';
+import promisePool from "../../utils/database.js";
+import { createGuestUser } from "./userModel.js";
 
-const addOrder = async (order) => {
-  const {price, date, status, products} = order
-  const sql= `INSERT INTO orders (price, date, status, products) VALUES (?, ?, ?, ?)`;
-  const params = [price, date, status, products];
-  await promisePool.execute(sql, params);
-}
+const addOrder = async (body, userId) => {
+  const { price, date } = body;
+  const sql = `INSERT INTO orders (price, date, orderer) VALUES (?, ?, ?)`;
+  const params = [price, date, userId];
+  const [rows] = await promisePool.execute(sql, params);
+  if (rows.affectedRows === 0) return false;
+  return { message: "Order places" };
+};
 
 const getAllOrders = async () => {
-  const [orders] = await promisePool.query('SELECT * from orders');
+  const [orders] = await promisePool.query("SELECT * from orders");
   return orders;
-}
+};
 
 const getUserOrder = async (id) => {
-  const [rows] = await promisePool.execute('SELECT * from orders WHERE orderer = ?', [id]);
-  if(rows.length === 0) {
+  const [rows] = await promisePool.execute(
+    "SELECT * from orders WHERE orderer = ?",
+    [id],
+  );
+  if (rows.length === 0) {
     return false;
   }
   return rows;
-}
+};
 
 const delOrder = async (id) => {
-  const sql = 'DELETE FROM orders WHERE id = ?';
+  const sql = "DELETE FROM orders WHERE id = ?";
   const [result] = await promisePool.execute(sql, [id]);
   if (result.affectedRows > 0) {
     return true;
   } else {
     return false;
   }
-}
+};
 
 const deliverOrder = async (id) => {
   try {
@@ -46,9 +52,8 @@ const deliverOrder = async (id) => {
     console.error('Error delivering order:', error);
     return false; // Return false to indicate that there was an error
   }
-}
+};
 
 // Todo: Update order write function??
 
-
-export {addOrder, getAllOrders, getUserOrder, delOrder, deliverOrder};
+export { addOrder, getAllOrders, getUserOrder, delOrder, deliverOrder };

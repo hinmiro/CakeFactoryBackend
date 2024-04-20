@@ -8,7 +8,7 @@ import userRouter from "./routes/userRouter.js";
 const router = express.Router();
 
 router.use("/users", userRouter);
-router.use("/order", orderRouter);
+router.use("/orders", orderRouter);
 router.use("/products", productRouter);
 
 export default router;
