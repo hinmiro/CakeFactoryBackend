@@ -29,8 +29,35 @@ const getAllProducts = async () => {
   return rows;
 };
 
+const getProduct = async (id) => {
+  const [rows] = await promisePool.execute(
+    "SELECT * FROM products WHERE id = ?",
+    [id],
+  );
+  if (rows.length === 0) {
+    return false;
+  }
+  return rows[0];
+};
+
+const exterminateProduct = async (id, user) => {
+  if (user.access !== "admin") {
+    return { message: "Only admin can delete products" };
+  }
+  try {
+    const [rows] = await promisePool.execute(
+      "DELETE FROM products WHERE id = ?",
+      [id],
+    );
+    if (rows.affectedRows === 0) return false;
+    return { message: "Product deleted" };
+  } catch (err) {
+    console.error("Error: ", err);
+    return false;
+  }
+};
+
 // Todo : Update product write function
 // Todo : Delete product read function
-// Todo : Get product by id read function
 
-export { addProduct, getAllProducts };
+export { addProduct, getAllProducts, getProduct, exterminateProduct };

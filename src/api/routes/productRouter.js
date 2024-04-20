@@ -2,7 +2,12 @@
 import express from "express";
 import crypto from "crypto";
 import multer from "multer";
-import { postProduct, getProducts } from "../controllers/productController.js";
+import {
+  postProduct,
+  getProducts,
+  getProductById,
+  deleteProduct,
+} from "../controllers/productController.js";
 import { authToken, validationErrors } from "../../middlewares.js";
 
 const storage = multer.diskStorage({
@@ -56,5 +61,10 @@ productRouter
   .route("/")
   .get(getProducts)
   .post(authToken, validationErrors, adminUpload, postProduct);
+
+productRouter
+  .route("/:id")
+  .get(getProductById)
+  .delete(authToken, validationErrors, deleteProduct);
 
 export default productRouter;

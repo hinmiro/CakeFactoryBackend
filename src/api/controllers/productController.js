@@ -1,6 +1,11 @@
 "use strict";
 
-import { addProduct, getAllProducts } from "../models/productModel.js";
+import {
+  addProduct,
+  getAllProducts,
+  getProduct,
+  exterminateProduct,
+} from "../models/productModel.js";
 
 const postProduct = async (req, res, next) => {
   try {
@@ -21,7 +26,26 @@ const getProducts = async (req, res) => {
   return res.status(200).json(await getAllProducts());
 };
 
-//Todo: connect deleteProduct function
+const getProductById = async (req, res) => {
+  const response = await getProduct(req.params.id);
+  if (!response) {
+    res.sendStatus(204);
+  } else {
+    res.status(200).json(response);
+  }
+};
+
+const deleteProduct = async (req, res, next) => {
+  const result = await exterminateProduct(req.params.id, res.locals.user);
+  if (!result) {
+    const error = new Error("No product with that id");
+    error.status = 400;
+    next(error);
+  } else {
+    res.status(200).json(result);
+  }
+};
+
 //Todo: connect updateProduct function
 
-export { postProduct, getProducts };
+export { postProduct, getProducts, getProductById, deleteProduct };
