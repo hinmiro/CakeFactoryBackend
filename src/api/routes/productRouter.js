@@ -2,7 +2,7 @@
 import express from "express";
 import crypto from "crypto";
 import multer from "multer";
-import { postProduct } from "../controllers/productController.js";
+import { postProduct, getProducts } from "../controllers/productController.js";
 import { authToken, validationErrors } from "../../middlewares.js";
 
 const storage = multer.diskStorage({

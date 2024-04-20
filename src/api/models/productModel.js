@@ -21,8 +21,16 @@ const addProduct = async (product, file, user) => {
   }
 };
 
+const getAllProducts = async () => {
+  const [rows] = await promisePool.execute("SELECT * FROM products");
+  if (rows.length === 0) {
+    return { message: "No products in database" };
+  }
+  return rows;
+};
+
 // Todo : Update product write function
 // Todo : Delete product read function
 // Todo : Get product by id read function
 
-export { addProduct };
+export { addProduct, getAllProducts };

@@ -1,6 +1,6 @@
 "use strict";
 
-import { addProduct } from "../models/productModel.js";
+import { addProduct, getAllProducts } from "../models/productModel.js";
 
 const postProduct = async (req, res, next) => {
   try {
@@ -17,8 +17,11 @@ const postProduct = async (req, res, next) => {
   }
 };
 
-//Todo: connect getProduct function
+const getProducts = async (req, res) => {
+  return res.status(200).json(await getAllProducts());
+};
+
 //Todo: connect deleteProduct function
 //Todo: connect updateProduct function
 
-export { postProduct };
+export { postProduct, getProducts };
