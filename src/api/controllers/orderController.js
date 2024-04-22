@@ -6,7 +6,7 @@ import {
   getUserOrder,
   delOrder,
   deliverOrder,
-} from '../models/orderModel.js';
+} from "../models/orderModel.js";
 
 import {
   addUser,
@@ -43,7 +43,11 @@ const postOrder = async (req, res, next) => {
 
 const getOrders = async (req, res) => {
   try {
-    res.json(await getAllOrders());
+    const result = await getAllOrders(res.locals.user);
+    if (!result) {
+      res.status(403).json({ message: "Only for admins eyes" });
+    }
+    return result;
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -51,7 +55,7 @@ const getOrders = async (req, res) => {
 
 const getUserOrders = async (req, res) => {
   try {
-    const result = await getUserOrder(req.params.id);
+    const result = await getUserOrder(req.params.id, res.locals.user);
     if (result) {
       res.json(result);
     } else {
@@ -64,11 +68,15 @@ const getUserOrders = async (req, res) => {
 
 const deleteOrder = async (req, res) => {
   try {
-    const result = await delOrder(req.params.id);
-    if (result) {
-      res.status(201).json({ message: "order posted" });
+    const result = await delOrder(req.params.id, res.locals.user);
+    if (result.message === "Unauthorized") {
+      res.status(403).json({ message: "Only admins can delete orders" });
+    } else if (result) {
+      res.status(200).json({ message: "Order deleted" });
     } else {
-      res.status(400);
+      res
+        .status(400)
+        .json({ message: `No order found with id${req.params.id}` });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });
