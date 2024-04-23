@@ -32,11 +32,78 @@ const addProduct = async (body, file, user) => {
 };
 
 const getAllProducts = async () => {
-  const [rows] = await promisePool.execute("SELECT * FROM products");
-  if (rows.length === 0) {
+  const query = `
+  SELECT
+      p.id AS product_id,
+      p.name AS product_name,
+      p.price AS product_price,
+      p.description AS product_description,
+      p.img AS product_img,
+      i.id AS ingredient_id,
+      i.name AS ingredient_name,
+      a.id AS allergen_id,
+      a.name AS allergen_name
+  FROM
+      products p
+  JOIN
+      ingredients_products ip ON p.id = ip.product_id
+  JOIN
+      ingredients i ON ip.ingredient_id = i.id
+  JOIN
+      allergens_ingredients ai ON i.id = ai.ingredient_id
+  JOIN
+      allergens a ON ai.allergen_id = a.id;
+`;
+  const rows = await promisePool.query(query);
+  if (rows[0].length === 0) {
     return { message: "No products in database" };
   }
-  return rows;
+  let products = [];
+
+  rows[0].forEach((row) => {
+    let product = products.find(
+      (product) => product.product_id === row.product_id,
+    );
+
+    if (!product) {
+      product = {
+        product_id: row.product_id,
+        product_name: row.product_name,
+        product_price: row.product_price,
+        product_description: row.product_description,
+        product_img: row.product_img,
+        ingredients: [],
+        allergens: [],
+      };
+
+      products.push(product);
+    }
+
+    let ingredient = product.ingredients.find(
+      (i) => i.ingredient_id === row.ingredient_id,
+    );
+
+    if (!ingredient) {
+      ingredient = {
+        ingredient_id: row.ingredient_id,
+        ingredient_name: row.ingredient_name,
+      };
+      product.ingredients.push(ingredient);
+    }
+
+    let allergen = product.allergens.find(
+      (a) => a.allergen_id === row.allergen_id,
+    );
+
+    if (!allergen) {
+      allergen = {
+        allergen_id: row.allergen_id,
+        allergen_name: row.allergen_name,
+      };
+      product.allergens.push(allergen);
+    }
+  });
+  return products;
 };
 
 const getProduct = async (id) => {
