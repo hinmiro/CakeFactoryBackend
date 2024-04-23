@@ -26,4 +26,6 @@ orderRouter
   .delete(authToken, validationErrors, deleteOrder)
   .put(authToken, validationErrors, putDelivery);
 
+//orderRouter.route('/delivered/:id')
+
 export default orderRouter;

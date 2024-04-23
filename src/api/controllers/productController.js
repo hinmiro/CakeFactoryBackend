@@ -6,6 +6,7 @@ import {
   getProduct,
   exterminateProduct,
   updateProduct,
+  getAllIngredients,
 } from "../models/productModel.js";
 
 const postProduct = async (req, res, next) => {
@@ -58,4 +59,19 @@ const putProduct = async (req, res, next) => {
   }
 };
 
-export { postProduct, getProducts, getProductById, deleteProduct, putProduct };
+const getIngredients = async (req, res) => {
+  const result = await getAllIngredients();
+  if (!result) {
+    res.sendStatus(500);
+  }
+  res.status(200).json(result);
+};
+
+export {
+  postProduct,
+  getProducts,
+  getProductById,
+  deleteProduct,
+  putProduct,
+  getIngredients,
+};

@@ -71,10 +71,19 @@ const updateProduct = async (id, user, body) => {
   return { message: "Product update success", rows };
 };
 
+const getAllIngredients = async () => {
+  const [rows] = await promisePool.execute("SELECT * FROM ingredients");
+  if (rows.length === 0) {
+    return false;
+  }
+  return rows;
+};
+
 export {
   addProduct,
   getAllProducts,
   getProduct,
   exterminateProduct,
   updateProduct,
+  getAllIngredients,
 };

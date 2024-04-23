@@ -8,6 +8,7 @@ import {
   getProductById,
   deleteProduct,
   putProduct,
+  getIngredients,
 } from "../controllers/productController.js";
 import { authToken, validationErrors } from "../../middlewares.js";
 
@@ -62,6 +63,8 @@ productRouter
   .route("/")
   .get(getProducts)
   .post(authToken, validationErrors, adminUpload, postProduct);
+
+productRouter.route("/ingredients").get(getIngredients);
 
 productRouter
   .route("/:id")
