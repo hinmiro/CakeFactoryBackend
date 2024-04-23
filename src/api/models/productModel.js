@@ -172,6 +172,34 @@ const getProductIngredients = async (id) => {
   return rows;
 };
 
+const newIngredient = async (body, user) => {
+  if (user.access !== "admin") {
+    return { message: "unauthorized" };
+  }
+  const { name, price, allergens } = body;
+  console.log("name", name);
+  const allergenList = JSON.parse(allergens);
+  console.log(allergenList);
+
+  const [rows] = await promisePool.execute(
+    "INSERT INTO ingredients (name, price) VALUES (?, ?)",
+    [name, price],
+  );
+
+  if (rows.affectedRows === 0) {
+    return false;
+  }
+  await Promise.all(
+    allergenList.map(async (i) => {
+      return promisePool.execute(
+        "INSERT INTO allergens_ingredients (allergen_id, ingredient_id) VALUES (?, ?)",
+        [i, rows.insertId],
+      );
+    }),
+  );
+  return { message: "Success" };
+};
+
 export {
   addProduct,
   getAllProducts,
@@ -180,4 +208,5 @@ export {
   updateProduct,
   getAllIngredients,
   getProductIngredients,
+  newIngredient,
 };

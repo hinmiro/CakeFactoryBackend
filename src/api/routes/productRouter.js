@@ -10,6 +10,7 @@ import {
   putProduct,
   getIngredients,
   productIngredients,
+  addIngredient,
 } from "../controllers/productController.js";
 import { authToken, validationErrors } from "../../middlewares.js";
 
@@ -65,7 +66,10 @@ productRouter
   .get(getProducts)
   .post(authToken, validationErrors, adminUpload, postProduct);
 
-productRouter.route("/ingredients").get(getIngredients);
+productRouter
+  .route("/ingredients")
+  .get(getIngredients)
+  .post(authToken, validationErrors, addIngredient);
 
 productRouter.route("/ingredients/:id").get(productIngredients);
 

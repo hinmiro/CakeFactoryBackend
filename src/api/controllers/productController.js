@@ -8,6 +8,7 @@ import {
   updateProduct,
   getAllIngredients,
   getProductIngredients,
+  newIngredient,
 } from "../models/productModel.js";
 
 const postProduct = async (req, res, next) => {
@@ -76,6 +77,22 @@ const productIngredients = async (req, res) => {
   res.status(200).json(result);
 };
 
+const addIngredient = async (req, res) => {
+  try {
+    const result = await newIngredient(req.body, res.locals.user);
+    if (result.message === "unauthorized")
+      res.status(403).json({ message: "Only admins" });
+
+    if (!result) {
+      res.status(403).json({ message: "Invalid fields" });
+    }
+
+    res.status(201).json({ message: "New ingredient added" });
+  } catch (err) {
+    console.error("Error: ", err);
+  }
+};
+
 export {
   postProduct,
   getProducts,
@@ -84,4 +101,5 @@ export {
   putProduct,
   getIngredients,
   productIngredients,
+  addIngredient,
 };
