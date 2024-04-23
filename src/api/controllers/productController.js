@@ -7,6 +7,7 @@ import {
   exterminateProduct,
   updateProduct,
   getAllIngredients,
+  getProductIngredients,
 } from "../models/productModel.js";
 
 const postProduct = async (req, res, next) => {
@@ -17,7 +18,7 @@ const postProduct = async (req, res, next) => {
       error.status = 400;
       next(error);
     } else {
-      res.status(201).json({ message: "New product added", result });
+      res.status(201).json({ message: "New product added" });
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -67,6 +68,14 @@ const getIngredients = async (req, res) => {
   res.status(200).json(result);
 };
 
+const productIngredients = async (req, res) => {
+  const result = await getProductIngredients(req.params.id);
+  if (!result) {
+    res.status(204).json({ message: "No ingredients with that product" });
+  }
+  res.status(200).json(result);
+};
+
 export {
   postProduct,
   getProducts,
@@ -74,4 +83,5 @@ export {
   deleteProduct,
   putProduct,
   getIngredients,
+  productIngredients,
 };

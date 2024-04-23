@@ -18,7 +18,7 @@ const optionalAuthToken = (req, res, next) => {
 const authToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  console.log("Token: ", token);
+  // console.log("Token: ", token);
   if (token == null) res.sendStatus(401);
 
   try {

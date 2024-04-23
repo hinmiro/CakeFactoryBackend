@@ -16,7 +16,7 @@ const getAllOrders = async (user) => {
   if (user.access !== "admin") {
     return false;
   }
-  const [orders] = await promisePool.query("SELECT * from orders");
+  const [orders] = await promisePool.execute("SELECT * from orders");
   return orders;
 };
 
