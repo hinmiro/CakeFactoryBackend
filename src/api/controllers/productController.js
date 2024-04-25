@@ -9,6 +9,7 @@ import {
   getAllIngredients,
   getProductIngredients,
   newIngredient,
+  delIng,
 } from "../models/productModel.js";
 
 const postProduct = async (req, res, next) => {
@@ -80,16 +81,28 @@ const productIngredients = async (req, res) => {
 const addIngredient = async (req, res) => {
   try {
     const result = await newIngredient(req.body, res.locals.user);
-    if (result.message === "unauthorized")
+    if (result.message === "unauthorized") {
       res.status(403).json({ message: "Only admins" });
-
-    if (!result) {
-      res.status(403).json({ message: "Invalid fields" });
     }
-
-    res.status(201).json({ message: "New ingredient added" });
+    if (result.message === "exist") {
+      res.status(409).json({ message: "Ingredient already exists" });
+    } else {
+      res.status(201).json({ message: "New ingredient added" });
+    }
   } catch (err) {
     console.error("Error: ", err);
+  }
+};
+
+const deleteIngredient = async (req, res) => {
+  const result = await delIng(req.params.id, res.locals.user);
+  if (!result) {
+    res.status(403).json({ message: "Only for admins m8" });
+  }
+  if (result.message === "nothing") {
+    res.status(409).json({ message: "Invalid id" });
+  } else {
+    res.status(200).json({ message: "Ingredient delete success" });
   }
 };
 
@@ -102,4 +115,5 @@ export {
   getIngredients,
   productIngredients,
   addIngredient,
+  deleteIngredient,
 };

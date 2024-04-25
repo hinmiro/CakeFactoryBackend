@@ -59,7 +59,7 @@ const validationErrors = async (req, res, next) => {
   }
   next();
 };
-
+//TODO thumbnail
 export {
   authToken,
   notFoundHandler,

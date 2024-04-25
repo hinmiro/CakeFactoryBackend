@@ -177,10 +177,11 @@ const newIngredient = async (body, user) => {
     return { message: "unauthorized" };
   }
   const { name, price, allergens } = body;
-  console.log("name", name);
-  const allergenList = JSON.parse(allergens);
-  console.log(allergenList);
-
+  const [checkName] = await promisePool.query(
+    "SELECT * FROM ingredients WHERE name = ?",
+    [name],
+  );
+  if (checkName === 0) return { message: "exist" };
   const [rows] = await promisePool.execute(
     "INSERT INTO ingredients (name, price) VALUES (?, ?)",
     [name, price],
@@ -189,15 +190,51 @@ const newIngredient = async (body, user) => {
   if (rows.affectedRows === 0) {
     return false;
   }
+  if (allergens.length === 0) {
+    return { message: "no allergens" };
+  }
   await Promise.all(
-    allergenList.map(async (i) => {
-      return promisePool.execute(
-        "INSERT INTO allergens_ingredients (allergen_id, ingredient_id) VALUES (?, ?)",
-        [i, rows.insertId],
+    allergens.map(async (i) => {
+      const [check] = await promisePool.query(
+        "SELECT * FROM allergens WHERE name = ?",
+        [i],
       );
+      if (check.length > 0) {
+        const [add] = await promisePool.execute(
+          "INSERT INTO allergens_ingredients (allergen_id, ingredient_id) VALUES (?, ?)",
+          [check[0].id, rows.insertId],
+        );
+        return add;
+      } else {
+        const [allergen] = await promisePool.execute(
+          "INSERT INTO allergens (name) VALUES (?)",
+          [i],
+        );
+        return promisePool.execute(
+          "INSERT INTO allergens_ingredients (allergen_id, ingredient_id) VALUES (?, ?)",
+          [allergen.insertId, rows.insertId],
+        );
+      }
     }),
   );
   return { message: "Success" };
+};
+
+const delIng = async (id, user) => {
+  if (user.access !== "admin") {
+    return false;
+  }
+  await promisePool.execute(
+    "DELETE FROM allergens_ingredients WHERE ingredient_id = ?",
+    [id],
+  );
+  const [rows] = await promisePool.execute(
+    "DELETE FROM ingredients WHERE id = ?",
+    [id],
+  );
+
+  if (rows.affectedRows === 0) return { message: "nothing" };
+  return true;
 };
 
 export {
@@ -209,4 +246,5 @@ export {
   getAllIngredients,
   getProductIngredients,
   newIngredient,
+  delIng,
 };

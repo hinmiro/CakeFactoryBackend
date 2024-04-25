@@ -11,6 +11,7 @@ import {
   getIngredients,
   productIngredients,
   addIngredient,
+  deleteIngredient,
 } from "../controllers/productController.js";
 import { authToken, validationErrors } from "../../middlewares.js";
 
@@ -71,7 +72,10 @@ productRouter
   .get(getIngredients)
   .post(authToken, validationErrors, addIngredient);
 
-productRouter.route("/ingredients/:id").get(productIngredients);
+productRouter
+  .route("/ingredients/:id")
+  .get(productIngredients)
+  .delete(authToken, validationErrors, deleteIngredient);
 
 productRouter
   .route("/:id")

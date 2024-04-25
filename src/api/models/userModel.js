@@ -31,6 +31,7 @@ const addUser = async (user) => {
     password ||
       `${bcrypt.hashSync(crypto.randomBytes(10).toString("hex"), 12)}`,
     access || "guest",
+      //TODO users are always guests
   ];
   if (params.some((p) => p === null || p === undefined)) return false;
   const sql =
