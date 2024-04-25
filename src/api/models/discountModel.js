@@ -13,4 +13,47 @@ const getDiscounts = async (user) => {
   return result;
 };
 
-export { getDiscounts };
+const addDiscount = async (user, body) => {
+  if (user.access !== "admin") {
+    return { message: "unauthorized" };
+  }
+  const { name, amount } = body;
+  const randomBytes = crypto.randomBytes(Math.ceil(10 / 2));
+  const code = randomBytes.toString("hex").slice(0, 10);
+  try {
+    const [result] = await promisePool.execute(
+      "INSERT INTO discounts (name, amount, code) VALUES(?, ?, ?)",
+      [name, amount, code],
+    );
+    if (result.affectedRows === 0) {
+      return { message: "Invalid data" };
+    } else {
+      return { message: "success" };
+    }
+  } catch (err) {
+    console.error("Error: ", err);
+    return false;
+  }
+};
+
+const deleteCode = async (user, id) => {
+  if (user.access !== "admin") {
+    return { message: "unauthorized" };
+  }
+  try {
+    const [result] = await promisePool.execute(
+      "DELETE FROM discounts WHERE id = ?",
+      [id],
+    );
+    if (result.affectedRows === 0) {
+      return { message: "Invalid id" };
+    } else {
+      return { message: "success" };
+    }
+  } catch (err) {
+    console.error("Error: ", err);
+    return false;
+  }
+};
+
+export { getDiscounts, addDiscount, deleteCode };
