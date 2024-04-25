@@ -43,7 +43,7 @@ const addUser = async (user) => {
 };
 
 const getUser = async (id) => {
-  console.log(id);
+ // console.log(id);
   const rows = await promisePool.query("SELECT * FROM users WHERE id = ?", [
     id,
   ]);
@@ -74,7 +74,7 @@ const updateUser = async (id, body, user) => {
 
   try {
     const rows = await promisePool.execute(sql);
-    console.log("Updated user", rows);
+  //  console.log("Updated user", rows);
     if (rows[0].affectedRows === 0) return false;
     return { message: "Success" };
   } catch (err) {

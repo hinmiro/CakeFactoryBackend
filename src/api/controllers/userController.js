@@ -22,7 +22,7 @@ const registerUser = async (req, res) => {
 const getUserById = async (req, res) => {
   const result = await getUser(req.params.id);
   if (!result) res.sendStatus(400);
-  console.log(result);
+  // console.log(result);
   res.status(200).json(result);
 };
 
