@@ -55,7 +55,7 @@ const deliverOrder = async (id) => {
     }
   } catch (error) {
     console.error("Error delivering order:", error);
-    return false; // Return false to indicate that there was an error
+    return false;
   }
 };
 

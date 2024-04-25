@@ -144,7 +144,6 @@ const updateProduct = async (id, user, body) => {
   if (user.access !== "admin") {
     return { message: "Only admin can update products" };
   }
-  console.log(body);
   const sql = promisePool.format("UPDATE products SET ? WHERE id = ?", [
     body,
     id,
@@ -167,7 +166,6 @@ const getProductIngredients = async (id) => {
     "SELECT p.id, p.name, i.id, i.name FROM products p JOIN ingredients_products ip ON p.id = ip.product_id JOIN ingredients i ON ip.ingredient_id = i.id WHERE p.id = ?;",
     [id],
   );
-  console.log(rows);
   if (rows.affectedRows === 0) return false;
   return rows;
 };

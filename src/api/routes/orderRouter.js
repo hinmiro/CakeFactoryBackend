@@ -20,6 +20,7 @@ orderRouter
   .route("/")
   .post(optionalAuthToken, postOrder)
   .get(authToken, validationErrors, getOrders);
+
 orderRouter
   .route("/:id")
   .get(authToken, getUserOrders)
