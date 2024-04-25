@@ -9,8 +9,9 @@ const getAllDiscounts = async (req, res) => {
     }
     if (result.message === "noting found") {
       res.status(200).json({ message: "No codes" });
+    } else {
+      res.status(200).json(result);
     }
-    res.status(200).json(result);
   } catch (err) {
     console.error("Error: ", err);
   }
