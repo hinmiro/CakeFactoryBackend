@@ -45,7 +45,8 @@ const delOrder = async (id, user) => {
   }
   const sql = "DELETE FROM orders WHERE id = ?";
   const [result] = await promisePool.execute(sql, [id]);
-  return result.affectedRows !== 0;
+  if (result.affectedRows === 0) return { message: "invalid" };
+  return { message: "success" };
 };
 
 const deliverOrder = async (id) => {

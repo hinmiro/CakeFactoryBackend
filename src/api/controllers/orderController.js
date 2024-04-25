@@ -67,12 +67,10 @@ const deleteOrder = async (req, res) => {
     const result = await delOrder(req.params.id, res.locals.user);
     if (result.message === "Unauthorized") {
       res.status(403).json({ message: "Only admins can delete orders" });
-    } else if (result) {
+    } else if (result.message === "success") {
       res.status(200).json({ message: "Order deleted" });
     } else {
-      res
-        .status(400)
-        .json({ message: `No order found with id${req.params.id}` });
+      res.status(400).json({ message: `No order found with id` });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });
