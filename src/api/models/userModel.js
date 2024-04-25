@@ -9,7 +9,6 @@ const listAllUsers = async () => {
   const [rows] = await promisePool.query("SELECT * FROM users");
   return rows;
 };
-//todo if access not given then it should be user
 const addUser = async (user) => {
   const {
     name,
@@ -31,7 +30,6 @@ const addUser = async (user) => {
     password ||
       `${bcrypt.hashSync(crypto.randomBytes(10).toString("hex"), 12)}`,
     access || "guest",
-      //TODO users are always guests
   ];
   if (params.some((p) => p === null || p === undefined)) return false;
   const sql =
@@ -43,7 +41,7 @@ const addUser = async (user) => {
 };
 
 const getUser = async (id) => {
- // console.log(id);
+  // console.log(id);
   const rows = await promisePool.query("SELECT * FROM users WHERE id = ?", [
     id,
   ]);
@@ -74,7 +72,7 @@ const updateUser = async (id, body, user) => {
 
   try {
     const rows = await promisePool.execute(sql);
-  //  console.log("Updated user", rows);
+    //  console.log("Updated user", rows);
     if (rows[0].affectedRows === 0) return false;
     return { message: "Success" };
   } catch (err) {
@@ -82,24 +80,34 @@ const updateUser = async (id, body, user) => {
     return false;
   }
 };
-// todo fix deleteUser it doesnt delete right id, it deletes user itself
-const deleteUserById = async (id, user) => {
-  if (id !== user.id && user.access !== "admin") {
-    return;
-  }
-  console.log("id", id, "   user", user.id);
-  let sql = promisePool.format("DELETE FROM users WHERE id = ?", [user.id]);
 
-  if (user.access === "admin") {
-    let sql = promisePool.format("DELETE FROM users WHERE id = ?", [id]);
-  }
+const deleteUserById = async (id, user) => {
   try {
-    const rows = await promisePool.execute(sql);
-    if (rows[0].length === 0) return false;
-    return { message: "Deleted user" };
+    id = parseInt(id);
+
+    if (id !== user.id && user.access !== "admin") {
+      return { message: "unauthorized delete" };
+    }
+
+    if (id === user.id && user.access === "admin") {
+      return { message: "admin delete" };
+    }
+
+    if (user.access !== "admin") {
+      const [check] = await promisePool.query(
+        "SELECT * FROM orders WHERE orderer = ? AND status = 0",
+        [id],
+      );
+      if (check.length > 0) {
+        return { message: "undelivered orders" };
+      }
+    }
+
+    await promisePool.execute("DELETE FROM users WHERE id = ?", [id]);
+    return { message: "success" };
   } catch (err) {
-    console.error("Error", err);
-    return false;
+    console.error("Error: ", err);
+    return { message: "An error occurred" };
   }
 };
 

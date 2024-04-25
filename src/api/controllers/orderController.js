@@ -8,11 +8,7 @@ import {
   deliverOrder,
 } from "../models/orderModel.js";
 
-import {
-  addUser,
-  createGuestUser,
-  getUserByUsername,
-} from "../models/userModel.js";
+import { addUser, getUserByUsername } from "../models/userModel.js";
 
 const postOrder = async (req, res, next) => {
   let result;

@@ -4,12 +4,17 @@ import promisePool from "../../utils/database.js";
 import { createGuestUser } from "./userModel.js";
 
 const addOrder = async (body, userId) => {
-  const { price, date } = body;
-  const sql = `INSERT INTO orders (price, date, orderer) VALUES (?, ?, ?)`;
-  const params = [price, date, userId];
-  const [rows] = await promisePool.execute(sql, params);
-  if (rows.affectedRows === 0) return false;
-  return { message: "Order places" };
+  try {
+    const { price, date } = body;
+    const sql = `INSERT INTO orders (price, date, orderer) VALUES (?, ?, ?)`;
+    const params = [price, date, userId];
+    const [rows] = await promisePool.execute(sql, params);
+    if (rows.affectedRows === 0) return false;
+    return { message: "Order places" };
+  } catch (err) {
+    console.log("Error: ", err);
+    return false;
+  }
 };
 
 const getAllOrders = async (user) => {
