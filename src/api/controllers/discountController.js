@@ -1,5 +1,5 @@
 "use strict";
-import { getDiscounts } from "../models/discountModel.js";
+import { getDiscounts, addCode } from "../models/discountModel.js";
 
 const getAllDiscounts = async (req, res) => {
   try {
@@ -17,4 +17,19 @@ const getAllDiscounts = async (req, res) => {
   }
 };
 
-export { getAllDiscounts };
+const addNewCode = async (req, res, next) => {
+  try {
+    const result = await addCode(req.body, res.locals.user);
+    if (!result) {
+      const error = new Error('failed to add code');
+      error.status = 400;
+      next(error);
+    } else {
+      res.status(201).json({message: 'New code added'});
+    }
+  } catch (error) {
+    res.status(400).json({error: error.message});
+  }
+}
+
+export { getAllDiscounts, addNewCode };

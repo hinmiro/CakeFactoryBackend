@@ -13,4 +13,16 @@ const getDiscounts = async (user) => {
   return result;
 };
 
-export { getDiscounts };
+const addCode = async (body) => {
+  const {name, amount, code} = body;
+  const sql = `INSERT INTO discount (name, amount, code) VALUES (?, ?, ?)`;
+  const params = [name, amount, code];
+
+  const rows = await promisePool.execute(sql, params);
+  if (rows[0].affectedRows === 0) {
+    return false;
+  }
+  return { message: 'ok'};
+}
+
+export { getDiscounts, addCode };
