@@ -1,6 +1,7 @@
 "use strict";
 
 import promisePool from "../../utils/database.js";
+import crypto from "crypto";
 
 const getDiscounts = async (user) => {
   if (user.access !== "admin") {
@@ -17,12 +18,12 @@ const addDiscount = async (user, body) => {
   if (user.access !== "admin") {
     return { message: "unauthorized" };
   }
-  const { name, amount } = body;
-  const randomBytes = crypto.randomBytes(Math.ceil(10 / 2));
-  const code = randomBytes.toString("hex").slice(0, 10);
   try {
+    const { name, amount } = body;
+    const randomBytes = crypto.randomBytes(Math.ceil(10 / 2));
+    const code = randomBytes.toString("hex").slice(0, 10);
     const [result] = await promisePool.execute(
-      "INSERT INTO discounts (name, amount, code) VALUES(?, ?, ?)",
+      "INSERT INTO discount (name, amount, code) VALUES(?, ?, ?)",
       [name, amount, code],
     );
     if (result.affectedRows === 0) {
@@ -42,7 +43,7 @@ const deleteCode = async (user, id) => {
   }
   try {
     const [result] = await promisePool.execute(
-      "DELETE FROM discounts WHERE id = ?",
+      "DELETE FROM discount WHERE id = ?",
       [id],
     );
     if (result.affectedRows === 0) {
@@ -56,4 +57,21 @@ const deleteCode = async (user, id) => {
   }
 };
 
-export { getDiscounts, addDiscount, deleteCode };
+const checkCode = async (body) => {
+  const { code } = body;
+  try {
+    const [result] = await promisePool.query(
+      "SELECT * FROM discount WHERE code = ?",
+      [code],
+    );
+    if (result.length === 0) {
+      return { message: "invalid" };
+    } else {
+      return { message: "valid" };
+    }
+  } catch (err) {
+    return err;
+  }
+};
+
+export { getDiscounts, addDiscount, deleteCode, checkCode };

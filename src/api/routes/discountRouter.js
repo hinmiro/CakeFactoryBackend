@@ -6,6 +6,7 @@ import {
   getAllDiscounts,
   postDiscount,
   deleteDiscount,
+  checkDiscount,
 } from "../controllers/discountController.js";
 
 const discountRouter = express.Router();
@@ -14,6 +15,8 @@ discountRouter
   .route("/")
   .get(authToken, getAllDiscounts)
   .post(authToken, postDiscount)
-  .delete(authToken, deleteDiscount);
+  .put(authToken, checkDiscount);
+
+discountRouter.route("/:id").delete(authToken, deleteDiscount);
 
 export default discountRouter;

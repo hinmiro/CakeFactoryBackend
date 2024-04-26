@@ -3,6 +3,7 @@ import {
   getDiscounts,
   addDiscount,
   deleteCode,
+  checkCode,
 } from "../models/discountModel.js";
 
 const getAllDiscounts = async (req, res) => {
@@ -51,6 +52,16 @@ const deleteDiscount = async (req, res) => {
   }
 };
 
-// TODO discount checker
+const checkDiscount = async (req, res) => {
+  const response = await checkCode(req.body);
+  if (response.message === "invalid") {
+    res.status(409).json({ message: "Invalid discount code" });
+  }
+  if (response.message === "valid") {
+    res.status(200).json({ message: "Valid", response });
+  } else {
+    res.status(500).json(response);
+  }
+};
 
-export { getAllDiscounts, postDiscount, deleteDiscount };
+export { getAllDiscounts, postDiscount, deleteDiscount, checkDiscount };
