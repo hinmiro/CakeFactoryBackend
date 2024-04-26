@@ -30,7 +30,6 @@ const authToken = (req, res, next) => {
 };
 
 const notFoundHandler = (res, req, next) => {
-  //console.log("req: ", req);
   const error = new Error(`Resource not found: ${req.originalUrl}`);
   error.status = 404;
   next(error);

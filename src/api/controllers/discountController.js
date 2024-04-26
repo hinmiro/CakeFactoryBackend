@@ -9,7 +9,7 @@ const getAllDiscounts = async (req, res) => {
   try {
     const result = await getDiscounts(res.locals.user);
     if (result.message === "unauthorized") {
-      res.status(403).json({ message: "Only for admins eyeballssSZ!" });
+      res.status(403).json({ message: "Only for admins eyeballzz!" });
     }
     if (result.message === "noting found") {
       res.status(200).json({ message: "No codes" });
