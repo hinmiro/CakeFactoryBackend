@@ -19,9 +19,7 @@ const addDiscount = async (user, body) => {
     return { message: "unauthorized" };
   }
   try {
-    const { name, amount } = body;
-    const randomBytes = crypto.randomBytes(Math.ceil(10 / 2));
-    const code = randomBytes.toString("hex").slice(0, 10);
+    const { name, amount, code } = body;
     const [result] = await promisePool.execute(
       "INSERT INTO discount (name, amount, code) VALUES(?, ?, ?)",
       [name, amount, code],
