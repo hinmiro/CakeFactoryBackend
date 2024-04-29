@@ -121,23 +121,18 @@ const exterminateProduct = async (id, user) => {
   if (user.access !== "admin") {
     return { message: "Only admin can delete products" };
   }
-  try {
-    const [row1] = await promisePool.execute(
-      "DELETE FROM ingredients_products WHERE product_id = ?",
-      [id],
-    );
-    if (row1.affectedRows === 0) return false;
+  const [row1] = await promisePool.execute(
+    "DELETE FROM ingredients_products WHERE product_id = ?",
+    [id],
+  );
+  if (row1.affectedRows === 0) return false;
 
-    const [rows] = await promisePool.execute(
-      "DELETE FROM products WHERE id = ?",
-      [id],
-    );
-    if (rows.affectedRows === 0) return false;
-    return { message: "Product deleted" };
-  } catch (err) {
-    console.error("Error: ", err);
-    return false;
-  }
+  const [rows] = await promisePool.execute(
+    "DELETE FROM products WHERE id = ?",
+    [id],
+  );
+  if (rows.affectedRows === 0) return false;
+  return { message: "Product deleted" };
 };
 
 const updateProduct = async (id, user, body) => {

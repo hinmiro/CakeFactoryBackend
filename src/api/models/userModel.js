@@ -41,7 +41,6 @@ const addUser = async (user) => {
 };
 
 const getUser = async (id) => {
-  // console.log(id);
   const rows = await promisePool.query("SELECT * FROM users WHERE id = ?", [
     id,
   ]);
@@ -70,45 +69,34 @@ const updateUser = async (id, body, user) => {
     sql = promisePool.format("UPDATE users SET ? WHERE id = ?", [body, id]);
   }
 
-  try {
-    const rows = await promisePool.execute(sql);
-    //  console.log("Updated user", rows);
-    if (rows[0].affectedRows === 0) return false;
-    return { message: "Success" };
-  } catch (err) {
-    console.error("Error", err);
-    return false;
-  }
+  const rows = await promisePool.execute(sql);
+  if (rows[0].affectedRows === 0) return false;
+  return { message: "Success" };
 };
 
 const deleteUserById = async (id, user) => {
-  try {
-    id = parseInt(id);
+  id = parseInt(id);
 
-    if (id !== user.id && user.access !== "admin") {
-      return { message: "unauthorized delete" };
-    }
-
-    if (id === user.id && user.access === "admin") {
-      return { message: "admin delete" };
-    }
-
-    if (user.access !== "admin") {
-      const [check] = await promisePool.query(
-        "SELECT * FROM orders WHERE orderer = ? AND status = 0",
-        [id],
-      );
-      if (check.length > 0) {
-        return { message: "undelivered orders" };
-      }
-    }
-
-    await promisePool.execute("DELETE FROM users WHERE id = ?", [id]);
-    return { message: "success" };
-  } catch (err) {
-    console.error("Error: ", err);
-    return { message: "An error occurred" };
+  if (id !== user.id && user.access !== "admin") {
+    return { message: "unauthorized delete" };
   }
+
+  if (id === user.id && user.access === "admin") {
+    return { message: "admin delete" };
+  }
+
+  if (user.access !== "admin") {
+    const [check] = await promisePool.query(
+      "SELECT * FROM orders WHERE orderer = ? AND status = 0",
+      [id],
+    );
+    if (check.length > 0) {
+      return { message: "undelivered orders" };
+    }
+  }
+
+  await promisePool.execute("DELETE FROM users WHERE id = ?", [id]);
+  return { message: "success" };
 };
 
 const createGuestUser = async (body) => {
@@ -120,6 +108,14 @@ const createGuestUser = async (body) => {
   }
 };
 
+const isUsernameAvailable = async (username) => {
+  const [response] = await promisePool.query(
+    "SELECT * FROM users WHERE username = ?",
+    [username],
+  );
+  return response.length === 0;
+};
+
 export {
   getUserByUsername,
   listAllUsers,
@@ -128,4 +124,5 @@ export {
   updateUser,
   deleteUserById,
   createGuestUser,
+  isUsernameAvailable,
 };

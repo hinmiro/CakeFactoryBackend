@@ -30,7 +30,7 @@ userRouter
 userRouter
   .route("/:id")
   .get(getUserById)
-  .put(authToken, modifyUser)
-  .delete(authToken, deleteUser);
+  .put(authToken, validationErrors, modifyUser)
+  .delete(authToken, validationErrors, deleteUser);
 
 export default userRouter;

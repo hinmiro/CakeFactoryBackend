@@ -13,20 +13,24 @@ import {
   validationErrors,
   optionalAuthToken,
 } from "../../middlewares.js";
+import { body } from "express-validator";
 
 const orderRouter = express.Router();
 
 orderRouter
   .route("/")
-  .post(optionalAuthToken, postOrder)
+  .post(
+    optionalAuthToken,
+    body("price").trim().notEmpty().isNumeric(),
+    body("date").trim().notEmpty().isDate(),
+    postOrder,
+  )
   .get(authToken, validationErrors, getOrders);
 
 orderRouter
   .route("/:id")
-  .get(authToken, getUserOrders)
+  .get(authToken, validationErrors, getUserOrders)
   .delete(authToken, validationErrors, deleteOrder)
   .put(authToken, validationErrors, putDelivery);
-
-//orderRouter.route('/delivered/:id')
 
 export default orderRouter;

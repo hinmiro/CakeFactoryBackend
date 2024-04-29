@@ -23,20 +23,28 @@ const postProduct = async (req, res, next) => {
       res.status(201).json({ message: "New product added" });
     }
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 };
 
-const getProducts = async (req, res) => {
-  return res.status(200).json(await getAllProducts());
+const getProducts = async (req, res, next) => {
+  try {
+    return res.status(200).json(await getAllProducts());
+  } catch (err) {
+    next(err);
+  }
 };
 
-const getProductById = async (req, res) => {
-  const response = await getProduct(req.params.id);
-  if (!response) {
-    res.sendStatus(204);
-  } else {
-    res.status(200).json(response);
+const getProductById = async (req, res, next) => {
+  try {
+    const response = await getProduct(req.params.id);
+    if (!response) {
+      res.sendStatus(204);
+    } else {
+      res.status(200).json(response);
+    }
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -62,23 +70,31 @@ const putProduct = async (req, res, next) => {
   }
 };
 
-const getIngredients = async (req, res) => {
-  const result = await getAllIngredients();
-  if (!result) {
-    res.sendStatus(500);
+const getIngredients = async (req, res, next) => {
+  try {
+    const result = await getAllIngredients();
+    if (!result) {
+      res.sendStatus(500);
+    }
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
   }
-  res.status(200).json(result);
 };
 
-const productIngredients = async (req, res) => {
-  const result = await getProductIngredients(req.params.id);
-  if (!result) {
-    res.status(204).json({ message: "No ingredients with that product" });
+const productIngredients = async (req, res, next) => {
+  try {
+    const result = await getProductIngredients(req.params.id);
+    if (!result) {
+      res.status(204).json({ message: "No ingredients with that product" });
+    }
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
   }
-  res.status(200).json(result);
 };
 
-const addIngredient = async (req, res) => {
+const addIngredient = async (req, res, next) => {
   try {
     const result = await newIngredient(req.body, res.locals.user);
     if (result.message === "unauthorized") {
@@ -90,19 +106,23 @@ const addIngredient = async (req, res) => {
       res.status(201).json({ message: "New ingredient added" });
     }
   } catch (err) {
-    console.error("Error: ", err);
+    next(err);
   }
 };
 
-const deleteIngredient = async (req, res) => {
-  const result = await delIng(req.params.id, res.locals.user);
-  if (!result) {
-    res.status(403).json({ message: "Only for admins m8" });
-  }
-  if (result.message === "nothing") {
-    res.status(409).json({ message: "Invalid id" });
-  } else {
-    res.status(200).json({ message: "Ingredient delete success" });
+const deleteIngredient = async (req, res, next) => {
+  try {
+    const result = await delIng(req.params.id, res.locals.user);
+    if (!result) {
+      res.status(403).json({ message: "Only for admins m8" });
+    }
+    if (result.message === "nothing") {
+      res.status(409).json({ message: "Invalid id" });
+    } else {
+      res.status(200).json({ message: "Ingredient delete success" });
+    }
+  } catch (err) {
+    next(err);
   }
 };
 

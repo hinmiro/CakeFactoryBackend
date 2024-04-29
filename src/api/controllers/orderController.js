@@ -37,7 +37,7 @@ const postOrder = async (req, res, next) => {
   }
 };
 
-const getOrders = async (req, res) => {
+const getOrders = async (req, res, next) => {
   try {
     const result = await getAllOrders(res.locals.user);
     if (!result) {
@@ -45,11 +45,11 @@ const getOrders = async (req, res) => {
     }
     res.status(200).json(result);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 };
 
-const getUserOrders = async (req, res) => {
+const getUserOrders = async (req, res, next) => {
   try {
     const result = await getUserOrder(req.params.id, res.locals.user);
     if (result) {
@@ -58,11 +58,11 @@ const getUserOrders = async (req, res) => {
       res.status(400);
     }
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 };
 
-const deleteOrder = async (req, res) => {
+const deleteOrder = async (req, res, next) => {
   try {
     const result = await delOrder(req.params.id, res.locals.user);
     if (result.message === "Unauthorized") {
@@ -73,11 +73,11 @@ const deleteOrder = async (req, res) => {
       res.status(400).json({ message: `No order found with id` });
     }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    next(error);
   }
 };
 
-const putDelivery = async (req, res) => {
+const putDelivery = async (req, res, next) => {
   try {
     const result = await deliverOrder(req.params.id);
     if (result) {
@@ -86,7 +86,7 @@ const putDelivery = async (req, res) => {
       res.status(400);
     }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    next(error);
   }
 };
 

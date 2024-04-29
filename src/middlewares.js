@@ -29,7 +29,7 @@ const authToken = (req, res, next) => {
   }
 };
 
-const notFoundHandler = (res, req, next) => {
+const notFoundHandler = (req, res, next) => {
   const error = new Error(`Resource not found: ${req.originalUrl}`);
   error.status = 404;
   next(error);
@@ -58,7 +58,7 @@ const validationErrors = async (req, res, next) => {
   }
   next();
 };
-//TODO thumbnail
+
 export {
   authToken,
   notFoundHandler,

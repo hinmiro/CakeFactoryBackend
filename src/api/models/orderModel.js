@@ -12,7 +12,6 @@ const addOrder = async (body, userId) => {
     if (rows.affectedRows === 0) return false;
     return { message: "Order places" };
   } catch (err) {
-    console.log("Error: ", err);
     return false;
   }
 };
@@ -60,11 +59,8 @@ const deliverOrder = async (id) => {
       return false;
     }
   } catch (error) {
-    console.error("Error delivering order:", error);
     return false;
   }
 };
-
-// Todo: Update order write function??
 
 export { addOrder, getAllOrders, getUserOrder, delOrder, deliverOrder };

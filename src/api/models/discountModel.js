@@ -1,7 +1,6 @@
 "use strict";
 
 import promisePool from "../../utils/database.js";
-import crypto from "crypto";
 
 const getDiscounts = async (user) => {
   if (user.access !== "admin") {
