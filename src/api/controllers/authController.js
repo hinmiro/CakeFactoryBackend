@@ -6,10 +6,10 @@ import { getUserByUsername } from "../models/userModel.js";
 
 const postLogin = async (req, res) => {
   const user = await getUserByUsername(req.body.username);
-  if (!user) res.sendStatus(401);
+  if (!user) return res.status(401).json({ message: "Invalid username" });
 
   if (!bcrypt.compareSync(req.body.password, user.password))
-    res.sendStatus(401);
+   return res.status(401).json({ message: "Invalid password" });
 
   delete user.password;
 
