@@ -29,7 +29,6 @@ const addDiscount = async (user, body) => {
       return { message: "success" };
     }
   } catch (err) {
-    console.error("Error: ", err);
     return false;
   }
 };
@@ -49,7 +48,6 @@ const deleteCode = async (user, id) => {
       return { message: "success" };
     }
   } catch (err) {
-    console.error("Error: ", err);
     return false;
   }
 };

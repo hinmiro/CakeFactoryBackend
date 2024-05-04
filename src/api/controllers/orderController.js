@@ -11,29 +11,26 @@ import {
 import { addUser, getUserByUsername } from "../models/userModel.js";
 
 const postOrder = async (req, res, next) => {
-  let result;
-  if (res.locals.user) {
-    result = await addOrder(req.body, res.locals.user.id);
-  } else {
-    const { name, street_name, street_num, zip_code, city } = req.body;
-    const guestUserBody = {
-      name: name,
-      street_name: street_name,
-      street_num: street_num,
-      zip_code: zip_code,
-      city: city,
-    };
-    const guestUser = await addUser(guestUserBody);
-    const guest = await getUserByUsername(guestUser);
-    console.log(req.body);
-    result = await addOrder(req.body, guest.id);
-  }
-  if (!result) {
-    const error = new Error("Unexpected error");
-    error.status = 500;
-    next(error);
-  } else {
+  try {
+    let result;
+    if (res.locals.user) {
+      result = await addOrder(req.body, res.locals.user.id);
+    } else {
+      const { name, street_name, street_num, zip_code, city } = req.body;
+      const guestUserBody = {
+        name: name,
+        street_name: street_name,
+        street_num: street_num,
+        zip_code: zip_code,
+        city: city,
+      };
+      const guestUser = await addUser(guestUserBody);
+      const guest = await getUserByUsername(guestUser);
+      result = await addOrder(req.body, guest.id);
+    }
     res.status(201).json(result);
+  } catch (err) {
+    next(err);
   }
 };
 
