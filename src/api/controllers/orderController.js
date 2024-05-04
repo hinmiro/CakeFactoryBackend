@@ -37,8 +37,12 @@ const postOrder = async (req, res, next) => {
 const getOrders = async (req, res, next) => {
   try {
     const result = await getAllOrders(res.locals.user);
-    if (!result) {
+    if (result.message === "unauthorized") {
       res.status(403).json({ message: "Only for admins eyes" });
+    }
+
+    if (!result) {
+      res.status(500).json({ message: "Internal server error" });
     }
     res.status(200).json(result);
   } catch (error) {
@@ -50,7 +54,7 @@ const getUserOrders = async (req, res, next) => {
   try {
     const result = await getUserOrder(req.params.id, res.locals.user);
     if (result) {
-      res.json(result);
+      res.status(200).json(result);
     } else {
       res.status(400);
     }
@@ -76,11 +80,14 @@ const deleteOrder = async (req, res, next) => {
 
 const putDelivery = async (req, res, next) => {
   try {
-    const result = await deliverOrder(req.params.id);
-    if (result) {
+    const result = await deliverOrder(req.params.id, res.locals.user);
+    if (result.message === "unauthorized") {
+      res.status(403).json({ message: "Only admins can alter orders" });
+    }
+    if (result.message === "success") {
       res.status(201).json({ message: `order ${req.params.id} delivered` });
     } else {
-      res.status(400);
+      res.status(400).json({ message: "Invalid id" });
     }
   } catch (error) {
     next(error);
