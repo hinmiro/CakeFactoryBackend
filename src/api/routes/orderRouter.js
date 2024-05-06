@@ -23,6 +23,7 @@ orderRouter
     optionalAuthToken,
     body("price").trim().notEmpty().isNumeric(),
     body("date").trim().notEmpty().isDate(),
+    body("products").trim().notEmpty(),
     postOrder,
   )
   .get(authToken, validationErrors, getOrders);
