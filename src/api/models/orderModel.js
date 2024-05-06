@@ -36,7 +36,6 @@ const addOrder = async (body, userId) => {
     );
     return { message: "Order places" };
   } catch (err) {
-    console.log(err.message);
     return false;
   }
 };
@@ -81,7 +80,6 @@ const getAllOrders = async (user) => {
         return orderDetails;
       }),
     );
-    console.log(ordersWithDetails);
     return ordersWithDetails;
   } catch (err) {}
 };
