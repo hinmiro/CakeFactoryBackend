@@ -10,6 +10,17 @@ import {
 
 import { addUser, getUserByUsername } from "../models/userModel.js";
 
+/**
+ * @api {post} /v1/orders Add Order
+ * @apiName PostOrder
+ * @apiGroup Order
+ *
+ * @apiParam {Object} order Order details.
+ *
+ * @apiSuccess {Object} result Order details.
+ *
+ * @apiError InternalServerError Error while adding the order.
+ */
 const postOrder = async (req, res, next) => {
   try {
     let result;
@@ -34,6 +45,18 @@ const postOrder = async (req, res, next) => {
   }
 };
 
+/**
+ * @api {get} /v1/orders Get All Orders
+ * @apiName GetOrders
+ * @apiGroup Order
+ *
+ * @apiHeader {String} Authorization JWT token of the user.
+ *
+ * @apiSuccess {Object[]} orders List of all orders.
+ *
+ * @apiError Unauthorized Only admin can access.
+ * @apiError InternalServerError Internal server error.
+ */
 const getOrders = async (req, res, next) => {
   try {
     const result = await getAllOrders(res.locals.user);
@@ -50,6 +73,18 @@ const getOrders = async (req, res, next) => {
   }
 };
 
+/**
+ * @api {get} /v1/orders/:id Get User Orders
+ * @apiName GetUserOrders
+ * @apiGroup Order
+ *
+ * @apiHeader {String} Authorization JWT token of the user.
+ * @apiParam {Number} id ID of the user.
+ *
+ * @apiSuccess {Object[]} orders List of user's orders.
+ *
+ * @apiError BadRequest Invalid user id.
+ */
 const getUserOrders = async (req, res, next) => {
   try {
     const result = await getUserOrder(req.params.id, res.locals.user);
@@ -63,6 +98,19 @@ const getUserOrders = async (req, res, next) => {
   }
 };
 
+/**
+ * @api {delete} /v1/orders/:id Delete Order
+ * @apiName DeleteOrder
+ * @apiGroup Order
+ *
+ * @apiHeader {String} Authorization JWT token of the user.
+ * @apiParam {Number} id ID of the order to delete.
+ *
+ * @apiSuccess {String} message Success message.
+ *
+ * @apiError Unauthorized Only admin can delete orders.
+ * @apiError BadRequest Invalid order id.
+ */
 const deleteOrder = async (req, res, next) => {
   try {
     const result = await delOrder(req.params.id, res.locals.user);
@@ -78,6 +126,19 @@ const deleteOrder = async (req, res, next) => {
   }
 };
 
+/**
+ * @api {put} /v1/orders/:id/delivery Deliver Order
+ * @apiName PutDelivery
+ * @apiGroup Order
+ *
+ * @apiHeader {String} Authorization JWT token of the user.
+ * @apiParam {Number} id ID of the order to deliver.
+ *
+ * @apiSuccess {String} message Success message.
+ *
+ * @apiError Unauthorized Only admin can alter orders.
+ * @apiError BadRequest Invalid order id.
+ */
 const putDelivery = async (req, res, next) => {
   try {
     const result = await deliverOrder(req.params.id, res.locals.user);
