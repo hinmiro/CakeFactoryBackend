@@ -37,7 +37,9 @@ const addUser = async (user) => {
 
   const rows = await promisePool.execute(sql, params);
   if (rows[0].affectedRows === 0) return false;
-  return params[5];
+  const newUser = await getUser(rows[0].insertId);
+  delete newUser[0].password;
+  return newUser;
 };
 
 const getUser = async (id) => {

@@ -8,6 +8,7 @@ import {
   deleteUserById,
   isUsernameAvailable,
 } from "../models/userModel.js";
+import jwt from "jsonwebtoken";
 
 /**
  * @api {get} /v1/users Get All Users
@@ -48,7 +49,10 @@ const registerUser = async (req, res, next) => {
     req.body.access = "user";
     const result = await addUser(req.body);
     if (!result) res.sendStatus(400);
-    res.status(201).json({ message: "New user added:", result });
+    const token = jwt.sign({ id: result.id }, process.env.SECRETKEY, {
+      expiresIn: "24h",
+    });
+    res.status(201).json({ message: "New user added:", result, token });
   } catch (err) {
     next(err);
   }
