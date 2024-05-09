@@ -15,7 +15,7 @@ const userRouter = express.Router();
 
 userRouter
   .route("/")
-  .get(getAllUsers)
+  .get(authToken, getAllUsers)
   .post(
     body("name").trim(),
     body("street_num").trim().isNumeric().notEmpty(),

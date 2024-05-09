@@ -170,6 +170,7 @@ const newIngredient = async (body, user) => {
     return { message: "unauthorized" };
   }
   const { name, price, allergens } = body;
+  const allergensList = JSON.parse(allergens);
   const [checkName] = await promisePool.query(
     "SELECT * FROM ingredients WHERE name = ?",
     [name],
@@ -183,11 +184,11 @@ const newIngredient = async (body, user) => {
   if (rows.affectedRows === 0) {
     return false;
   }
-  if (allergens.length === 0) {
+  if (allergensList.length === 0) {
     return { message: "no allergens" };
   }
   await Promise.all(
-    allergens.map(async (i) => {
+    allergensList.map(async (i) => {
       const [check] = await promisePool.query(
         "SELECT * FROM allergens WHERE name = ?",
         [i],

@@ -15,7 +15,7 @@ discountRouter
   .route("/")
   .get(authToken, getAllDiscounts)
   .post(authToken, postDiscount)
-  .put(authToken, checkDiscount);
+  .put(checkDiscount);
 
 discountRouter.route("/:id").delete(authToken, deleteDiscount);
 

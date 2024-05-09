@@ -8,7 +8,17 @@ import {
   deleteUserById,
   isUsernameAvailable,
 } from "../models/userModel.js";
+import jwt from "jsonwebtoken";
 
+/**
+ * @api {get} /v1/users Get All Users
+ * @apiName GetAllUsers
+ * @apiGroup User
+ *
+ * @apiSuccess {Object[]} users List of all users.
+ *
+ * @apiError InternalServerError Internal server error.
+ */
 const getAllUsers = async (req, res, next) => {
   try {
     res.json(await listAllUsers());
@@ -17,6 +27,18 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
+/**
+ * @api {post} /v1/users Register User
+ * @apiName RegisterUser
+ * @apiGroup User
+ *
+ * @apiParam {Object} user User details.
+ *
+ * @apiSuccess {String} message Success message.
+ * @apiSuccess {Object} result User details.
+ *
+ * @apiError Conflict Username is taken.
+ */
 const registerUser = async (req, res, next) => {
   const check = await isUsernameAvailable(req.body.username);
   if (!check) {
@@ -27,12 +49,26 @@ const registerUser = async (req, res, next) => {
     req.body.access = "user";
     const result = await addUser(req.body);
     if (!result) res.sendStatus(400);
-    res.status(201).json({ message: "New user added:", result });
+    const token = jwt.sign({ id: result.id }, process.env.SECRETKEY, {
+      expiresIn: "24h",
+    });
+    res.status(201).json({ message: "New user added:", result, token });
   } catch (err) {
     next(err);
   }
 };
 
+/**
+ * @api {get} /v1/users/:id Get User By Id
+ * @apiName GetUserById
+ * @apiGroup User
+ *
+ * @apiParam {Number} id ID of the user.
+ *
+ * @apiSuccess {Object} user User details.
+ *
+ * @apiError BadRequest Invalid user id.
+ */
 const getUserById = async (req, res, next) => {
   try {
     const result = await getUser(req.params.id);
@@ -43,6 +79,19 @@ const getUserById = async (req, res, next) => {
   }
 };
 
+/**
+ * @api {put} /v1/users/:id Update User
+ * @apiName ModifyUser
+ * @apiGroup User
+ *
+ * @apiParam {Number} id ID of the user to update.
+ * @apiParam {Object} user Updated user details.
+ *
+ * @apiSuccess {String} message Success message.
+ *
+ * @apiError Unauthorized Only admin can alter users.
+ * @apiError BadRequest Invalid user id.
+ */
 const modifyUser = async (req, res, next) => {
   try {
     const result = await updateUser(req.params.id, req.body, res.locals.user);
@@ -53,6 +102,18 @@ const modifyUser = async (req, res, next) => {
   }
 };
 
+/**
+ * @api {delete} /v1/users/:id Delete User
+ * @apiName DeleteUser
+ * @apiGroup User
+ *
+ * @apiParam {Number} id ID of the user to delete.
+ *
+ * @apiSuccess {String} message Success message.
+ *
+ * @apiError Unauthorized Only admin can delete users.
+ * @apiError BadRequest Invalid user id.
+ */
 const deleteUser = async (req, res, next) => {
   try {
     const result = await deleteUserById(req.params.id, res.locals.user);

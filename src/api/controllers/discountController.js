@@ -6,6 +6,19 @@ import {
   checkCode,
 } from "../models/discountModel.js";
 
+/**
+ * @api {get} /v1/discounts Get All Discounts
+ * @apiName GetAllDiscounts
+ * @apiGroup Discount
+ *
+ * @apiHeader {String} Authorization JWT token of the user.
+ *
+ * @apiSuccess {Object[]} discounts List of all discounts.
+ *
+ * @apiError Unauthorized Only admin can access.
+ * @apiError NotFound No discounts found.
+ */
+
 const getAllDiscounts = async (req, res) => {
   try {
     const result = await getDiscounts(res.locals.user);
@@ -22,6 +35,22 @@ const getAllDiscounts = async (req, res) => {
   }
 };
 
+/**
+ * @api {post} /v1/discounts Add Discount
+ * @apiName PostDiscount
+ * @apiGroup Discount
+ *
+ * @apiHeader {String} Authorization JWT token of the user.
+ * @apiParam {String} name Name of the discount.
+ * @apiParam {Number} amount Amount of the discount.
+ * @apiParam {String} code Code of the discount.
+ *
+ * @apiSuccess {String} message Success message.
+ *
+ * @apiError Unauthorized Only admin can add discount codes.
+ * @apiError BadRequest Invalid fields.
+ */
+
 const postDiscount = async (req, res) => {
   const response = await addDiscount(res.locals.user, req.body);
   if (response.message === "unauthorized") {
@@ -36,6 +65,20 @@ const postDiscount = async (req, res) => {
     res.status(500).json({ message: "Database error" });
   }
 };
+
+/**
+ * @api {delete} /v1/discounts/:id Delete Discount
+ * @apiName DeleteDiscount
+ * @apiGroup Discount
+ *
+ * @apiHeader {String} Authorization JWT token of the user.
+ * @apiParam {Number} id ID of the discount to delete.
+ *
+ * @apiSuccess {String} message Success message.
+ *
+ * @apiError Unauthorized Only admin can delete discounts.
+ * @apiError Conflict Invalid id.
+ */
 
 const deleteDiscount = async (req, res) => {
   const response = await deleteCode(res.locals.user, req.params.id);
@@ -52,13 +95,25 @@ const deleteDiscount = async (req, res) => {
   }
 };
 
+/**
+ * @api {post} /v1/discounts/check Check Discount
+ * @apiName CheckDiscount
+ * @apiGroup Discount
+ *
+ * @apiParam {String} code Code of the discount to check.
+ *
+ * @apiSuccess {String} message Success message.
+ * @apiSuccess {Object} result Discount details.
+ *
+ * @apiError Conflict Invalid discount code.
+ */
+
 const checkDiscount = async (req, res) => {
   const response = await checkCode(req.body);
   if (response.message === "invalid") {
     res.status(409).json({ message: "Invalid discount code" });
-  }
-  if (response.message === "valid") {
-    res.status(200).json({ message: "Valid", response });
+  } else if (response.message === "valid") {
+    res.status(200).json({ response });
   } else {
     res.status(500).json(response);
   }

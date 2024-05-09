@@ -62,7 +62,7 @@ const checkCode = async (body) => {
     if (result.length === 0) {
       return { message: "invalid" };
     } else {
-      return { message: "valid" };
+      return { message: "valid", result: result[0] };
     }
   } catch (err) {
     return err;

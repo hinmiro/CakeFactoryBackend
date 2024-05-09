@@ -21,15 +21,13 @@ app.use("/v1", api);
 app.use("/v1/auth", authRouter);
 app.use("/v1/orders", orderRouter);
 app.use("/v1/products", productRouter);
+app.use("/v1/discounts", discountRouter);
 app.get("/", (req, res) => {
   res.send("**Cake Factory server**");
 });
-app.use("/v1/discounts", discountRouter);
 
 app.use(notFoundHandler);
 app.use(validationErrors);
 app.use(errorHandler);
-
-
 
 export default app;
