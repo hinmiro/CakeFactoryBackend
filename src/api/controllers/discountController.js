@@ -113,7 +113,7 @@ const checkDiscount = async (req, res) => {
   if (response.message === "invalid") {
     res.status(409).json({ message: "Invalid discount code" });
   } else if (response.message === "valid") {
-    res.status(200).json({ response });
+    res.status(200).json(response);
   } else {
     res.status(500).json(response);
   }
