@@ -2,11 +2,13 @@
 
 import promisePool from "../../utils/database.js";
 import { createGuestUser } from "./userModel.js";
+import { json } from "express";
 
 const addOrder = async (body, userId) => {
   try {
     const { price, date, products, street_name, street_num, zip_code, city } =
       body;
+    const productsArr = JSON.parse(products);
     const sql = `INSERT INTO orders (price, date, orderer, street_name, street_num, zip_code, city) VALUES (?, ?, ?, ?, ?, ?, ?)`;
     const newDate = new Date(date);
     const formattedDate = newDate.toISOString().split("T")[0];
@@ -21,13 +23,12 @@ const addOrder = async (body, userId) => {
     ];
     const [rows] = await promisePool.execute(sql, params);
     if (rows.affectedRows === 0) return false;
-
     const insertProductOrder =
       "INSERT INTO orders_products (order_id, product_id, quantity) VALUES (?, ?, 1) " +
       "ON DUPLICATE KEY UPDATE quantity = quantity + 1";
 
     await Promise.all(
-      products.map(async (id) => {
+      productsArr.map(async (id) => {
         const [insertRows] = await promisePool.execute(insertProductOrder, [
           rows.insertId,
           id,
@@ -36,6 +37,7 @@ const addOrder = async (body, userId) => {
     );
     return { message: "Order places" };
   } catch (err) {
+    console.log("here:", err);
     return false;
   }
 };
