@@ -35,8 +35,8 @@ const postOrder = async (req, res, next) => {
         zip_code: zip_code,
         city: city,
       };
-      const guestUser = await addUser(guestUserBody);
-      const guest = await getUserByUsername(guestUser);
+      const [guestUser] = await addUser(guestUserBody);
+      const guest = await getUserByUsername(guestUser.username);
       result = await addOrder(req.body, guest.id);
     }
     res.status(201).json(result);
